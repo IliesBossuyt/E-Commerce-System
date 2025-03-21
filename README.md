@@ -1,1 +1,2 @@
-# E-Commerce-System
+mvn clean install
+mvn spring-boot:run

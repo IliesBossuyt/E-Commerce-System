@@ -1,4 +1,5 @@
 package com.ecommerce.POO_Project_groupe.models;
+
 import lombok.Data;
 
 @Data
