@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${pageTitle}">Accueil E-Commerce</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Insertion du header -->
+<div th:insert="~{fragments/header :: header}"></div>
+
+<main>
+    <div class="container">
+        <h2>Bienvenue sur notre E-Commerce</h2>
+        <p>Découvrez nos produits et profitez de remises exceptionnelles.</p>
+        <p>Cet exemple illustre une intégration Spring Boot + Thymeleaf.</p>
+    </div>
+</main>
+
+<!-- Insertion du footer -->
+<div th:insert="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
