@@ -8,8 +8,7 @@ POST /users/register : Inscrire un nouvel utilisateur
 {
   "username": "test_user",
   "email": "test@example.com",
-  "password": "securepassword",
-  "role": "RegularUser"
+  "password": "securepassword"
 }
 
 
@@ -50,10 +49,10 @@ GET	/products : Récupérer la liste de tous les produits
 
 GET	/products/{productID} : Récupérer les détails d’un produit par ID
 
-PUT	/products/{productID}/updateStock : Mettre à jour le stock d’un produit
-{
-  "quantity": 5
-}
+PUT	/products/{productID}/updateStock : Mettre à jour le stock d’un produit (Admin uniquement)
+  {
+    "quantity": 5
+  }
 
 
 DELETE /products/{productID} : Supprimer un produit (Admin uniquement)
@@ -103,10 +102,10 @@ Avec PayPal :
 
 
 PATCH /orders/{orderID}/status : Modifier le statut d’une commande (Admin uniquement)
-"Shipped"
+{
+    "Status": "Processing"
+}
 
 GET	/orders	: Récupérer toutes les commandes (Admin uniquement)
-
-GET	/orders/my-orders: Récupérer les commandes de l'utilisateur connecté
 
 GET	/orders/{orderID} : Récupérer une commande par son ID

@@ -21,7 +21,7 @@ public class ProductService {
     public Product addProduct(Product product) {
         boolean exists = products.stream().anyMatch(p -> p.getProductID() == product.getProductID());
         if (exists) {
-            throw new IllegalArgumentException("Product ID already exists.");
+            throw new IllegalArgumentException("Product ID existe déja.");
         }
         products.add(product);
         return product;
@@ -45,13 +45,19 @@ public class ProductService {
 
         if (productOptional.isPresent()) {
             productOptional.get().updateStock(quantity);
-            return "Stock updated successfully!";
+            return "Stock mis à jour avec succès.";
         } else {
-            return "Product not found.";
+            return "Produit non trouvé.";
         }
     }
 
     public boolean removeProduct(int productID) {
         return products.removeIf(product -> product.getProductID() == productID);
+    }    
+
+    public Optional<Product> getProductById(int productID) {
+        return products.stream()
+                .filter(product -> product.getProductID() == productID)
+                .findFirst();
     }    
 }

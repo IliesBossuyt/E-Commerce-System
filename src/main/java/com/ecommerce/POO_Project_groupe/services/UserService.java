@@ -4,6 +4,7 @@ import com.ecommerce.POO_Project_groupe.models.AdminUser;
 import com.ecommerce.POO_Project_groupe.models.PremiumUser;
 import com.ecommerce.POO_Project_groupe.models.RegularUser;
 import com.ecommerce.POO_Project_groupe.models.User;
+import com.ecommerce.POO_Project_groupe.models.Order;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 
@@ -29,12 +30,14 @@ public class UserService {
         String username = userData.get("username");
         String email = userData.get("email");
         String password = userData.get("password");
-        String role = userData.get("role");
-    
+        
         // Vérifier si l'email est déjà utilisé
         if (getUserByIdentifier(email).isPresent()) {
             throw new RuntimeException("Erreur : Cet email est déjà utilisé.");
         }
+    
+        // Vérifier si un rôle est spécifié, sinon mettre "RegularUser" par défaut
+        String role = userData.getOrDefault("role", "regular");
     
         // Empêcher l'inscription en tant qu'Admin
         if ("admin".equalsIgnoreCase(role)) {
@@ -44,12 +47,11 @@ public class UserService {
         // Créer l'utilisateur (Regular ou Premium uniquement)
         User newUser = "premium".equalsIgnoreCase(role)
                 ? new PremiumUser(username, email, password)
-                : new RegularUser(username, email, password);
+                : new RegularUser(username, email, password); // Par défaut RegularUser
     
         users.add(newUser);
         return newUser;
     }
-    
 
     // Récupérer tous les utilisateurs
     public List<User> getAllUsers() {
@@ -80,6 +82,12 @@ public class UserService {
 
     public List<String> viewOrderHistory(String username) {
         Optional<User> userOptional = getUserByIdentifier(username);
-        return userOptional.map(User::viewOrderHistory).orElseGet(ArrayList::new);
-    }    
+    
+        return userOptional.map(user ->
+            user.getOrderHistory()
+                .stream()
+                .map(Order::getOrderSummary)
+                .toList()
+        ).orElseGet(ArrayList::new);
+    }
 }

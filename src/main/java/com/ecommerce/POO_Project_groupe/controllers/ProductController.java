@@ -44,12 +44,12 @@ public class ProductController {
         return productService.getProductDetails(productID);
     }
 
-    // Mettre à jour le stock d'un produit (requiert un utilisateur connecté)
+    // Mettre à jour le stock d'un produit
     @PutMapping("/{productID}/updateStock")
     public ResponseEntity<String> updateStock(@PathVariable int productID, @RequestBody Map<String, Integer> requestData, HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username == null) {
-            return ResponseEntity.status(401).body("Erreur : Aucun utilisateur connecté.");
+        String role = (String) session.getAttribute("userRole");
+        if (role == null || !role.equals("Admin")) {
+            throw new RuntimeException("Seuls les admins peuvent ajouter un produit.");
         }
 
         // Vérifier si "quantity" est présent dans la requête JSON

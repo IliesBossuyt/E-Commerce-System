@@ -8,6 +8,7 @@ import com.ecommerce.POO_Project_groupe.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,76 +23,81 @@ public class OrderService {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private ProductService productService;
+
     public String placeOrder(String username, PaymentMethod paymentMethod) {
         User user = userService.getUserByIdentifier(username).orElse(null);
         if (user == null) {
             return "Utilisateur non trouvé.";
         }
-
-        // Récupérer le panier de l'utilisateur
-        Map<Product, Integer> cartItems = cartService.viewCart(username);
-        if (cartItems == null || cartItems.isEmpty()) {
+    
+        // Récupérer le panier sous forme de List<Map<String, Object>>
+        List<Map<String, Object>> cartItemsList = cartService.viewCart(username);
+        if (cartItemsList == null || cartItemsList.isEmpty()) {
             return "Le panier est vide, impossible de passer la commande.";
         }
-
-        // Vérifier si tous les produits sont en stock
-        for (Map.Entry<Product, Integer> entry : cartItems.entrySet()) {
-            Product product = entry.getKey();
-            int quantity = entry.getValue();
-
-            if (product.getStockQuantity() < quantity) {
-                return "Stock insuffisant pour " + product.getProductName();
+    
+        // Convertir List<Map<String, Object>> en Map<Product, Integer>
+        Map<Product, Integer> cartItems = new HashMap<>();
+        for (Map<String, Object> item : cartItemsList) {
+            int productID = (int) item.get("productID");
+            int quantity = (int) item.get("quantity");
+    
+            Optional<Product> productOptional = productService.getProductDetails(productID);
+            if (productOptional.isEmpty()) {
+                return "Produit introuvable pour l'ID: " + productID;
             }
+    
+            Product product = productOptional.get();
+            cartItems.put(product, quantity);
         }
-
-        // Calculer le montant total de la commande
+    
+        // Calcul du total et application de la réduction
         double totalAmount = cartService.calculateTotal(username);
-
-        // Appliquer une réduction selon le type d'utilisateur (Polymorphisme)
         double discountedTotal = user.applyDiscount(totalAmount);
-
-        // Vérifier si le paiement est validé
-        boolean paymentSuccess = paymentMethod.processPayment(discountedTotal);
-        if (!paymentSuccess) {
-            return "Paiement échoué. Commande annulée.";
-        }
-
-        // Créer la commande après validation du paiement
+    
+        // Création de la commande
         Order order = new Order(user, cartItems, discountedTotal, paymentMethod);
-        order.placeOrder();
         orders.add(order);
-
-        // Mettre à jour le stock des produits commandés
-        for (Map.Entry<Product, Integer> entry : cartItems.entrySet()) {
-            entry.getKey().updateStock(entry.getValue());
+    
+        // Validation de la commande (Stock & Paiement)
+        try {
+            boolean success = order.placeOrder(productService);
+            if (!success) {
+                orders.remove(order);
+                return "Erreur lors de la validation de la commande.";
+            }
+        } catch (RuntimeException e) {
+            orders.remove(order);
+            return e.getMessage();
         }
-
-        // Vider le panier après la commande
+    
+        // Ajouter la commande à l'historique de l'utilisateur
+        user.addOrderToHistory(order);
+    
+        // Nettoyage du panier après commande
         cartService.clearCart(username);
-
-        // Construire le message de retour
+    
         String responseMessage = "Commande passée avec succès, ID: " + order.getOrderID();
-
-        // Afficher la réduction seulement si l'utilisateur est Premium
         if (user instanceof PremiumUser) {
             responseMessage += ", Montant avant réduction: " + totalAmount + " €, Montant après réduction: " + discountedTotal + " €";
         }
-
         return responseMessage;
     }
-
+    
 
     public String updateOrderStatus(String orderID, String newStatus) {
         Optional<Order> orderOptional = orders.stream()
                 .filter(order -> order.getOrderID().equals(orderID))
                 .findFirst();
     
-        if (orderOptional.isEmpty()) {
-            throw new RuntimeException("Commande introuvable avec l'ID " + orderID);
+        if (orderOptional.isPresent()) {
+            orderOptional.get().updateStatus(newStatus);
+            return "Statut de la commande mis à jour avec succès.";
+        } else {
+            return "Commande non trouvée.";
         }
-    
-        orderOptional.get().updateStatus(newStatus);
-        return "Statut de la commande mis à jour avec succès.";
     }
     
 
@@ -109,5 +115,5 @@ public class OrderService {
         return orders.stream()
                      .filter(order -> order.getUser().getUsername().equals(username))
                      .toList();
-    }    
+    }
 }

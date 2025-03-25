@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -65,10 +66,10 @@ public class CartController {
 
     // Récupérer le contenu du panier
     @GetMapping("/view")
-    public ResponseEntity<?> viewCart(HttpSession session) {
+    public ResponseEntity<List<Map<String, Object>>> viewCart(HttpSession session) {
         String username = (String) session.getAttribute("loggedInUser");
         if (username == null) {
-            return ResponseEntity.status(401).body("Aucun utilisateur connecté.");
+            return ResponseEntity.status(401).body(null);
         }
         return ResponseEntity.ok(cartService.viewCart(username));
     }

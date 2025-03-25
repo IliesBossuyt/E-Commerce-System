@@ -24,14 +24,15 @@ public class Product {
 
     
     // Mise a jour stock apres achat
-    public void updateStock(int quantity) {
+    public String updateStock(int quantity) {
         if (quantity > 0 && stockQuantity >= quantity) {
             stockQuantity -= quantity;
-            System.out.println(quantity + " items sold. New stock: " + stockQuantity);
+            return quantity + " articles vendus. Nouveau stock : " + stockQuantity;
         } else {
-            System.out.println("Insufficient stock or invalid quantity.");
+            return "Stock insuffisant ou quantité invalide.";
         }
     }
+    
 
     // Afficher les details du produit
     public String getProductDetails() {

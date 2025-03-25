@@ -51,7 +51,11 @@ public class OrderController {
 
     // Mettre à jour le statut d'une commande
     @PatchMapping("/{orderID}/status")
-    public ResponseEntity<String> updateOrderStatus(@PathVariable String orderID, @RequestBody String newStatus, HttpSession session) {
+    public ResponseEntity<String> updateOrderStatus(
+            @PathVariable String orderID,
+            @RequestBody Map<String, String> requestBody,
+            HttpSession session) {
+    
         String username = (String) session.getAttribute("loggedInUser");
         String role = (String) session.getAttribute("userRole");
     
@@ -59,13 +63,20 @@ public class OrderController {
             return ResponseEntity.status(401).body("Aucun utilisateur connecté.");
         }
     
-        // Vérifier si l'utilisateur est admin
+        // Vérification si l'utilisateur est un Admin
         if (!"Admin".equals(role)) {
             return ResponseEntity.status(403).body("Accès refusé. Seuls les administrateurs peuvent modifier le statut d'une commande.");
         }
     
+        // Vérifier si le JSON contient bien un "status"
+        if (!requestBody.containsKey("Status")) {
+            return ResponseEntity.status(400).body("Erreur : Le champ 'Status' est manquant.");
+        }
+    
+        String newStatus = requestBody.get("Status");
+    
         return ResponseEntity.ok(orderService.updateOrderStatus(orderID, newStatus));
-    }
+    }     
     
 
     // Récupérer toutes les commandes
@@ -86,14 +97,5 @@ public class OrderController {
             return ResponseEntity.status(401).body("Aucun utilisateur connecté.");
         }
         return ResponseEntity.ok(orderService.getOrderById(orderID));
-    }
-
-    @GetMapping("/my-orders")
-    public ResponseEntity<?> getUserOrders(HttpSession session) {
-        String username = (String) session.getAttribute("loggedInUser");
-        if (username == null) {
-            return ResponseEntity.status(401).body("Aucun utilisateur connecté.");
-        }
-        return ResponseEntity.ok(orderService.getOrdersByUser(username));
     }
 }

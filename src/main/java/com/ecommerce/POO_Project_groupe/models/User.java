@@ -3,7 +3,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +12,7 @@ public abstract class User {
     private String username;
     private String email;
     private String password;
-    private List<String> orderHistory;
+    private List<Order> orderHistory = new ArrayList<>();
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -44,13 +43,12 @@ public abstract class User {
     }
 
     // Récupération de l'historique des commandes
-    public List<String> viewOrderHistory() {
-        return orderHistory;
+    public List<Order> viewOrderHistory() {
+        return this.orderHistory;
     }
 
-    // Ajouter une commande à l'historique
-    public void addOrder(String orderId) {
-        orderHistory.add(orderId);
+    public void addOrderToHistory(Order order) {
+        this.orderHistory.add(order);
     }
 
     // Méthode abstraite pour afficher le rôle de l'utilisateur

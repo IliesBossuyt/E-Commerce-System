@@ -5,7 +5,10 @@ import com.ecommerce.POO_Project_groupe.models.Product;
 import com.ecommerce.POO_Project_groupe.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -61,10 +64,22 @@ public class CartService {
         return cart.calculateTotal();
     }
 
-    public Map<Product, Integer> viewCart(String username) {
+    public List<Map<String, Object>> viewCart(String username) {
         Cart cart = carts.get(username);
-        return cart != null ? cart.getItems() : new HashMap<>();
+        if (cart == null) return new ArrayList<>();
+    
+        List<Map<String, Object>> cartItems = new ArrayList<>();
+        for (Map.Entry<Product, Integer> entry : cart.getItems().entrySet()) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("productID", entry.getKey().getProductID());
+            item.put("productName", entry.getKey().getProductName());
+            item.put("price", entry.getKey().getPrice());
+            item.put("quantity", entry.getValue());
+            cartItems.add(item);
+        }
+        return cartItems;
     }
+      
 
     public String clearCart(String username) {
         Cart cart = carts.remove(username);
