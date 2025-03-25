@@ -5,11 +5,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class HomeController {
+public class LoginController {
 
-    @GetMapping("/home")
-    public String showHome(Model model) {
-        model.addAttribute("pageTitle", "Accueil E-Commerce");
-        return "home"; 
+    @GetMapping("/login")
+    public String showlogin(Model model) {
+        model.addAttribute("pageTitle", "log");
+        return "login"; 
     }
 }

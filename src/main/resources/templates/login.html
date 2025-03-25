@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Connexion</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Insérer votre header si besoin -->
+<div th:insert="~{fragments/header :: header}"></div>
+
+<main>
+    <div class="container">
+        <h2>Connexion</h2>
+        <form id="loginForm">
+            <label for="identifier">Identifiant (email ou username) :</label>
+            <input type="text" id="identifier" required>
+
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" required>
+
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+</main>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+
+<!-- Script en fin de body -->
+<script>
+  // Récupérer le formulaire
+  const form = document.getElementById('loginForm');
+
+  // Intercepter l’événement "submit"
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault(); // Empêche l’envoi standard du formulaire
+
+    // Récupérer la valeur des champs
+    const identifier = document.getElementById('identifier').value;
+    const password = document.getElementById('password').value;
+    
+    // Envoyer la requête au back-end en JSON
+    const response = await fetch('/users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password })
+    });
+    
+    // Afficher le résultat
+    const result = await response.text();
+    alert(result);
+
+    // Vous pouvez également rediriger l’utilisateur
+    // par exemple : if (result.includes("successful")) { window.location.href = "/home"; }
+  });
+</script>
+
+</body>
+</html>

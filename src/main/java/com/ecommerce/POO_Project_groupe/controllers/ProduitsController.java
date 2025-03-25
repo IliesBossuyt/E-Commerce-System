@@ -10,20 +10,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @Controller
-public class ProductThymeleafController {
+public class ProduitsController {
 
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/thymeleaf/products")
+    @GetMapping("/product-list")
     public String showProducts(Model model) {
-        // Récupérer la liste des produits depuis le service
-        List<Product> productList = productService.getAllProducts();
+        // Récupérer la liste de tous les produits
+        List<Product> products = productService.getAllProducts();
 
-        // Ajouter dans le model => accessible par ${products} dans la page product-list.html
-        model.addAttribute("products", productList);
+        // Mettre cette liste dans le model pour la rendre disponible dans product-list.html
+        model.addAttribute("products", products);
 
-        // Retourne le nom du template (product-list.html) dans /templates
+        // Optionnel : un titre de page
+        model.addAttribute("pageTitle", "Nos produits disponibles");
+
+        // Retourne le template "product-list.html"
         return "product-list";
     }
 }

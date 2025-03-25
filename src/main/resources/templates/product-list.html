@@ -7,22 +7,23 @@
 </head>
 <body>
 
-<!-- Insert le header si vous avez un fragment -->
 <div th:insert="~{fragments/header :: header}"></div>
 
-<main style="padding: 1rem;">
-    <h2>Nos produits</h2>
-    <ul>
-        <li th:each="prod : ${products}">
-            <strong th:text="${prod.productName}">NomProduit</strong>
-            - 
-            <span th:text="${prod.price}">0</span> €
-        </li>
-    </ul>
+<main>
+    <div class="container">
+        <h2>Liste des produits</h2>
+        <ul class="product-list">
+            <li th:each="prod : ${products}">
+                <strong th:text="${prod.productName}">Nom produit</strong>
+                 - 
+                <span th:text="${prod.price}">0</span> €
+                <span> (Stock : </span>
+                <span th:text="${prod.stockQuantity}">0</span><span>)</span>
+            </li>
+        </ul>
+    </div>
 </main>
 
-<!-- Insert le footer si vous avez un fragment -->
 <div th:insert="~{fragments/footer :: footer}"></div>
-
 </body>
 </html>

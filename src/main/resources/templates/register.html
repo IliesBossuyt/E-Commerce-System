@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Inscription</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div th:insert="~{fragments/header :: header}"></div>
+
+<main>
+    <div class="container">
+        <h2>Inscription</h2>
+        
+        <!-- Notre formulaire pour l'inscription -->
+        <form id="registerForm">
+            <label for="username">Nom d'utilisateur :</label>
+            <input type="text" id="username" required>
+
+            <label for="email">Email :</label>
+            <input type="email" id="email" required>
+
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" required>
+
+            <label for="role">Type d’utilisateur :</label>
+            <select id="role">
+                <option value="">Regular</option>
+                <option value="premium">Premium</option>
+            </select>
+
+            <button type="submit">S'inscrire</button>
+        </form>
+    </div>
+</main>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+
+<!-- Script JavaScript en bas de la page -->
+<script>
+  // Sélectionner le formulaire par son id
+  const form = document.getElementById('registerForm');
+
+  // Écouter l'événement "submit"
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault(); // Empêche l’envoi par défaut du formulaire
+
+    // Récupérer les valeurs
+    const username = document.getElementById('username').value;
+    const email    = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const role     = document.getElementById('role').value;
+
+    // Créer un objet JSON
+    const requestData = { username, email, password, role };
+
+    // Envoyer la requête POST en JSON vers /users/register
+    const response = await fetch('/users/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestData)
+    });
+
+    // Lire la réponse (texte ou JSON)
+    if (response.ok) {
+      const result = await response.json(); // Si votre controller renvoie un User en JSON
+      alert("Inscription réussie pour l'utilisateur : " + result.username);
+      // Redirection potentielle, ex:
+      // window.location.href = "/login";
+    } else {
+      // Gérer l’erreur
+      const errorText = await response.text();
+      alert("Erreur : " + errorText);
+    }
+  });
+</script>
+
+</body>
+</html>
