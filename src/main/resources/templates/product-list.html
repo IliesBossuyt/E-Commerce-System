@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Liste des produits</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<!-- Insert le header si vous avez un fragment -->
+<div th:insert="~{fragments/header :: header}"></div>
+
+<main style="padding: 1rem;">
+    <h2>Nos produits</h2>
+    <ul>
+        <li th:each="prod : ${products}">
+            <strong th:text="${prod.productName}">NomProduit</strong>
+            - 
+            <span th:text="${prod.price}">0</span> €
+        </li>
+    </ul>
+</main>
+
+<!-- Insert le footer si vous avez un fragment -->
+<div th:insert="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

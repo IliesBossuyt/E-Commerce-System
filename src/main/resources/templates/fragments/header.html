@@ -1,0 +1,15 @@
+<!-- src/main/resources/templates/fragments/header.html -->
+
+<!-- Pas de DOCTYPE ni de <html>..., juste le body ou un div -->
+    <div th:fragment="header">
+        <header style="background:#333; color:#fff; padding:1rem;">
+            <h1>E-Commerce</h1>
+            <nav>
+                <!-- Ajustez les liens selon vos contrôleurs / routes -->
+                <a th:href="@{/home}" style="color:white; margin-right:1rem;">Accueil</a>
+                <a th:href="@{/thymeleaf/products}" style="color:white; margin-right:1rem;">Produits</a>
+                <!-- Vous pouvez ajouter d'autres liens -->
+            </nav>
+        </header>
+    </div>
+    
