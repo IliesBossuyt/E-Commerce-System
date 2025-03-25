@@ -3,11 +3,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import lombok.Data;
 
-@Data
-public class User {
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public abstract class User {
     private String username;
     private String email;
     private String password;
@@ -20,8 +22,8 @@ public class User {
         this.orderHistory = new ArrayList<>();
     }
 
-    // Hashes le password avec SHA-256
-    private String hashPassword(String password) {
+    // Hachage du mot de passe
+    public static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hash = md.digest(password.getBytes());
@@ -31,36 +33,31 @@ public class User {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error hashing password", e);
+            throw new RuntimeException("Erreur lors du hachage du mot de passe", e);
         }
     }
 
-    // Register (a modifier)
-    public static User register() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter email: ");
-        String email = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-        return new User(username, email, password);
-    }
-
-    // Login avec email ou username
+    // Authentification de l'utilisateur
     public boolean login(String identifier, String password) {
         String hashedInputPassword = hashPassword(password);
         return (this.email.equals(identifier) || this.username.equals(identifier)) && this.password.equals(hashedInputPassword);
     }
 
-    // Afficher l'historique des commandes
+    // Récupération de l'historique des commandes
     public List<String> viewOrderHistory() {
         return orderHistory;
     }
 
-    // Ajouter une commande
-    public void addOrder(String order) {
-        orderHistory.add(order);
+    // Ajouter une commande à l'historique
+    public void addOrder(String orderId) {
+        orderHistory.add(orderId);
     }
-    
+
+    // Méthode abstraite pour afficher le rôle de l'utilisateur
+    public abstract String getRole();
+
+    // Méthode par défaut pour les utilisateurs réguliers (pas de réduction)
+    public double applyDiscount(double totalAmount) {
+        return totalAmount; // Pas de remise pour les utilisateurs classiques
+    }
 }

@@ -1,9 +1,11 @@
 package com.ecommerce.POO_Project_groupe.models;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class Cart {
     private User user;
     private Map<Product, Integer> items;
@@ -13,24 +15,23 @@ public class Cart {
         this.items = new HashMap<>();
     }
 
-    // Adds a product to the cart
     public void addProduct(Product product, int quantity) {
         if (product.getStockQuantity() >= quantity) {
             items.put(product, items.getOrDefault(product, 0) + quantity);
-            System.out.println(quantity + " " + product.getProductName() + "(s) added to the cart.");
+            product.updateStock(quantity); // Décrémente le stock
         } else {
-            System.out.println("Not enough stock available for " + product.getProductName());
+            throw new RuntimeException("Stock insuffisant pour " + product.getProductName());
         }
     }
-
-    // Removes a product from the cart
+    
     public void removeProduct(Product product) {
         if (items.containsKey(product)) {
-            System.out.println(product.getProductName() + " removed from the cart.");
+            items.remove(product);
         } else {
-            System.out.println("Product not found in the cart.");
+            throw new RuntimeException("Produit non trouvé dans le panier.");
         }
     }
+    
 
     // Calculates the total price of all items in the cart
     public double calculateTotal() {
