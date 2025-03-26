@@ -27,7 +27,7 @@
 
 <div th:insert="~{fragments/footer :: footer}"></div>
 
-<!-- Script en fin de body -->
+<!-- Script JavaScript -->
 <script>
   // Récupérer le formulaire
   const form = document.getElementById('loginForm');
@@ -50,9 +50,6 @@
     // Afficher le résultat
     const result = await response.text();
     alert(result);
-
-    // Vous pouvez également rediriger l’utilisateur
-    // par exemple : if (result.includes("successful")) { window.location.href = "/home"; }
   });
 </script>
 

@@ -24,12 +24,6 @@
             <label for="password">Mot de passe :</label>
             <input type="password" id="password" required>
 
-            <label for="role">Type d’utilisateur :</label>
-            <select id="role">
-                <option value="">Regular</option>
-                <option value="premium">Premium</option>
-            </select>
-
             <button type="submit">S'inscrire</button>
         </form>
     </div>
@@ -37,7 +31,7 @@
 
 <div th:insert="~{fragments/footer :: footer}"></div>
 
-<!-- Script JavaScript en bas de la page -->
+<!-- Script JavaScript-->
 <script>
   // Sélectionner le formulaire par son id
   const form = document.getElementById('registerForm');
@@ -50,10 +44,9 @@
     const username = document.getElementById('username').value;
     const email    = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const role     = document.getElementById('role').value;
 
     // Créer un objet JSON
-    const requestData = { username, email, password, role };
+    const requestData = { username, email, password};
 
     // Envoyer la requête POST en JSON vers /users/register
     const response = await fetch('/users/register', {
@@ -66,8 +59,6 @@
     if (response.ok) {
       const result = await response.json(); // Si votre controller renvoie un User en JSON
       alert("Inscription réussie pour l'utilisateur : " + result.username);
-      // Redirection potentielle, ex:
-      // window.location.href = "/login";
     } else {
       // Gérer l’erreur
       const errorText = await response.text();
